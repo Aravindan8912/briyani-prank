@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="biryaniPrank">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biryani Prank</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .timer {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: fade 1s infinite alternate;
+        }
+        @keyframes fade {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
+        }
+        .message {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #FF6347;
+        }
+        button {
+            background: #FF4500;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #FF6347;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .timer {
+                font-size: 3em;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body ng-controller="PrankController">
+    <div class="container">
+        <h1>🍛 Your Biryani is Preparing...</h1>
+        <div class="subtitle">Estimated delivery time:</div>
+        <div class="timer">{{ timeLeft }}</div>
+        <div class="message">Chef is adding extra masala... please wait 😄</div>
+        <button ng-click="resetTimer()">Check Status Again</button>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        angular.module('biryaniPrank', [])
+            .controller('PrankController', function($scope, $interval) {
+                var targetDate = new Date('February 31, 2099 00:00:00'); // Invalid date, JS will handle as March 2 or 3, 2099
+
+                function updateTimer() {
+                    var now = new Date();
+                    var diff = targetDate - now;
+
+                    if (diff <= 0) {
+                        // Reset to a fake future date
+                        var randomDays = Math.floor(Math.random() * 365) + 1; // 1 to 365 days
+                        targetDate = new Date(now.getTime() + randomDays * 24 * 60 * 60 * 1000);
+                        diff = targetDate - now;
+                    }
+
+                    var hours = Math.floor(diff / (1000 * 60 * 60));
+                    var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    $scope.timeLeft = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2);
+                }
+
+                updateTimer();
+                $interval(updateTimer, 1000);
+
+                $scope.resetTimer = function() {
+                    var now = new Date();
+                    var randomDays = Math.floor(Math.random() * 365) + 1;
+                    targetDate = new Date(now.getTime() + randomDays * 24 * 60 * 60 * 1000);
+                    updateTimer();
+                };
+            });
+    </script>
+</body>
+</html>
